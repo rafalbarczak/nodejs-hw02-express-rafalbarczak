@@ -1,11 +1,10 @@
-const express = require("express");
-const logger = require("morgan");
-const cors = require("cors");
-const mongoose = require("mongoose");
-
-const contactsRouter = require("./routes/api/contacts");
-
-require("dotenv").config();
+import express from "express";
+import logger from "morgan";
+import cors from "cors";
+import mongoose from "mongoose";
+import { router as contactsRouter } from "./routes/api/contacts.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const { DB_HOST: uriDb } = process.env;
 
@@ -44,4 +43,4 @@ async function startServer() {
 }
 
 startServer();
-module.exports = app;
+export default app;

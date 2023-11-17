@@ -1,12 +1,9 @@
-const path = require("path");
-const fs = require("fs/promises");
-const { v4: uuidv4 } = require("uuid");
-
-const contactsPath = path.join(__dirname, "contacts.json");
-
-const Contact = require("./Contact");
-const { nextTick } = require("process");
-const { result } = require("@hapi/joi/lib/base");
+import path from "path";
+import fs from "fs/promises";
+import Contact from "./Contact.js";
+import { nextTick } from "process";
+import pkg from "@hapi/joi/lib/base.js";
+const { result } = pkg;
 
 const listContacts = async (req, res, next) => {
   try {
@@ -89,7 +86,7 @@ const updateStatusContact = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   listContacts,
   getContactById,
   removeContact,

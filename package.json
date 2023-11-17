@@ -8,6 +8,7 @@
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js"
   },
+  "type": "module",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "cors": "2.8.5",
