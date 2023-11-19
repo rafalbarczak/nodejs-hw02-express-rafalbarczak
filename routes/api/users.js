@@ -1,88 +1,19 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import User from "../../models/User.js";
 import authMiddleware from "../../middlewares/jwt.js";
+import {
+  userGetCurrent,
+  userLogin,
+  userLogout,
+  userSignup,
+} from "../../controllers/users.js";
 const router = express.Router();
 
-router.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+router.post("/signup", userSignup);
 
-  const user = await User.findOne({ email }, { _id: 1 }).lean();
+router.post("/login", userLogin);
 
-  if (user) {
-    return res.status(409).json({ message: "Email in use" });
-  }
-  try {
-    const newUser = new User({ email });
-    await newUser.setPassword(password);
-    await newUser.save();
-    res.status(201).json({ message: "User created" });
-  } catch (e) {
-    next(e);
-  }
-});
+router.get("/logout", authMiddleware, userLogout);
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(401).json({ message: "Email or password is wrong" });
-  }
-
-  const isPasswordCorrect = await user.validatePassword(password);
-
-  if (isPasswordCorrect) {
-    const payload = {
-      id: user._id,
-      email: user.email,
-      subscription: user.subscription,
-    };
-    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "12h" });
-    return res.json({
-      data: {
-        token,
-        user: {
-          email: `${payload.email}`,
-          subscription: `${payload.subscription}`,
-        },
-      },
-    });
-  } else {
-    return res.status(401).json({ message: "Email or password is wrong" });
-  }
-});
-
-router.get("/logout", authMiddleware, async (req, res, next) => {
-  try {
-    const currentUser = res.locals.user;
-    const user = await User.findById(currentUser._id);
-    if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    user.token = null;
-
-    await user.save();
-
-    res.status(204).json({ message: "Logout successful" });
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.get("/current", authMiddleware, async (req, res, next) => {
-  try {
-    const currentUser = res.locals.user;
-    const user = await User.findById(currentUser._id);
-    if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    res
-      .status(200)
-      .json({ email: user.email, subscription: user.subscription });
-  } catch (e) {
-    next(e);
-  }
-});
+router.get("/current", authMiddleware, userGetCurrent);
 
 export { router };
