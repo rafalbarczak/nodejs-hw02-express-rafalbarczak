@@ -1,0 +1,12 @@
+// import { error } from "@hapi/joi/lib/base";
+import passport from "passport";
+
+export default function authMiddleware(req, res, next) {
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (!user || err) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    res.locals.user = user[0];
+    next();
+  })(req, res, next);
+}
