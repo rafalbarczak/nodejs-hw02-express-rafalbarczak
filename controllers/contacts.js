@@ -1,9 +1,7 @@
-import path from "path";
-import fs from "fs/promises";
 import Contact from "../models/Contact.js";
-import { nextTick } from "process";
+// import { nextTick } from "process";
 import pkg from "@hapi/joi/lib/base.js";
-const { result } = pkg;
+// const { result } = pkg;
 
 const listContacts = async (req, res, next) => {
   try {
