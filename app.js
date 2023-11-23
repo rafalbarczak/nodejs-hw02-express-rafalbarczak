@@ -3,7 +3,10 @@ import logger from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import { router as contactsRouter } from "./routes/api/contacts.js";
+import { router as usersRouter } from "./routes/api/users.js";
 import dotenv from "dotenv";
+import setJWTStrategy from "./strategies/jwt.js";
+import authMiddleware from "./middlewares/jwt.js";
 dotenv.config();
 
 const { DB_HOST: uriDb } = process.env;
@@ -18,7 +21,10 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/contacts", contactsRouter);
+setJWTStrategy();
+
+app.use("/api/contacts", authMiddleware, contactsRouter);
+app.use("/users", usersRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });

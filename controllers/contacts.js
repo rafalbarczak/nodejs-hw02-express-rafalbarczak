@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
-import Contact from "./Contact.js";
+import Contact from "../models/Contact.js";
 import { nextTick } from "process";
 import pkg from "@hapi/joi/lib/base.js";
 const { result } = pkg;
