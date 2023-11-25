@@ -1,4 +1,3 @@
-// import { error } from "@hapi/joi/lib/base";
 import passport from "passport";
 
 export default function authMiddleware(req, res, next) {

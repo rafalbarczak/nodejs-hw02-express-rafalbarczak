@@ -8,7 +8,8 @@ import dotenv from "dotenv";
 import setJWTStrategy from "./strategies/jwt.js";
 import authMiddleware from "./middlewares/jwt.js";
 import path from "path";
-// import { v4 as uuid } from "uuid";
+import { setupFolder } from "./helpers/setupFolder.js";
+
 dotenv.config();
 
 const { DB_HOST: uriDb } = process.env;
@@ -24,6 +25,12 @@ app.use(cors());
 app.use(express.json());
 
 setJWTStrategy();
+
+const tempDir = path.join(process.cwd(), "temp");
+const storeImageDir = path.join(process.cwd(), "public/avatars");
+
+setupFolder(tempDir);
+setupFolder(storeImageDir);
 
 app.use("/api/contacts", authMiddleware, contactsRouter);
 app.use("/users", usersRouter);

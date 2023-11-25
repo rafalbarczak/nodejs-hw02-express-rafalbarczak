@@ -1,12 +1,10 @@
 import express from "express";
-import {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateContact,
-  updateStatusContact,
-} from "../../controllers/contacts.js";
+import { listContacts } from "../../controllers/contacts/listContacts.js";
+import { getContactById } from "../../controllers/contacts/getContactById.js";
+import { addContact } from "../../controllers/contacts/addContact.js";
+import { updateContact } from "../../controllers/contacts/updateContact.js";
+import { removeContact } from "../../controllers/contacts/removeContact.js";
+import { updateStatusContact } from "../../controllers/contacts/updateStatusContact.js";
 
 const router = express.Router();
 
