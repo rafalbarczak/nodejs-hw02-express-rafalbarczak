@@ -1,23 +1,30 @@
-import gravatar from "gravatar";
 import User from "../../models/User.js";
 import { v4 as uuid } from "uuid";
 import nodemailer from "nodemailer";
 
-export const userSignup = async (req, res, next) => {
-  const { email, password } = req.body;
+export const userResendVerificationEmail = async (req, res, next) => {
+  const { email } = req.body;
 
-  const user = await User.findOne({ email }, { _id: 1 }).lean();
-
-  if (user) {
-    return res.status(409).json({ message: "Email in use" });
+  if (!email) {
+    return res.status(400).json({ message: "Missing required field: email" });
   }
-  try {
-    const verificationToken = uuid();
 
-    const avatarURL = gravatar.url(email);
-    const newUser = new User({ email, avatarURL, verificationToken });
-    await newUser.setPassword(password);
-    await newUser.save();
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.verify) {
+      return res
+        .status(400)
+        .json({ message: "Verification has already been passed" });
+    }
+
+    const verificationToken = uuid();
+    user.verificationToken = verificationToken;
+    await user.save();
 
     const transporter = nodemailer.createTransport({
       host: "poczta.interia.pl",
@@ -40,7 +47,8 @@ export const userSignup = async (req, res, next) => {
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(201).json({ message: "User created. Verification email sent." });
+
+    res.status(200).json({ message: "Verification email resent" });
   } catch (e) {
     next(e);
   }
