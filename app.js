@@ -7,6 +7,9 @@ import { router as usersRouter } from "./routes/api/users.js";
 import dotenv from "dotenv";
 import setJWTStrategy from "./strategies/jwt.js";
 import authMiddleware from "./middlewares/jwt.js";
+import path from "path";
+import { setupFolder } from "./helpers/setupFolder.js";
+
 dotenv.config();
 
 const { DB_HOST: uriDb } = process.env;
@@ -23,8 +26,15 @@ app.use(express.json());
 
 setJWTStrategy();
 
+const tempDir = path.join(process.cwd(), "temp");
+const storeImageDir = path.join(process.cwd(), "public/avatars");
+
+setupFolder(tempDir);
+setupFolder(storeImageDir);
+
 app.use("/api/contacts", authMiddleware, contactsRouter);
 app.use("/users", usersRouter);
+app.use(express.static(path.join(process.cwd(), "public")));
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
